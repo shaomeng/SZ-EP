@@ -65,13 +65,13 @@ auto EP::write_n_bytes(const char* filename, size_t n_bytes, const void* buffer)
 
 template <typename T>
 void EP::calc_stats(const T* arr1,
-                       const T* arr2,
-                       size_t len,
-                       T& rmse,
-                       T& linfty,
-                       T& psnr,
-                       T& arr1min,
-                       T& arr1max)
+                    const T* arr2,
+                    size_t len,
+                    T& rmse,
+                    T& linfty,
+                    T& psnr,
+                    T& arr1min,
+                    T& arr1max)
 {
   const size_t stride_size = 4096;
   const size_t num_of_strides = len / stride_size;

@@ -1,10 +1,15 @@
 SHELL = /bin/sh
 
-FLAGS = -O2 -std=c++17
+FLAGS = -Wall -O2 -std=c++17
 
-all: sz-ep
+CXX = g++-11
+
+all: sz_ep
 
 EP.o: EP.cpp 
-	c++ ${FLAGS} -c -o $@ $<
+	${CXX} ${FLAGS} -c -o $@ $<
+
+sz_ep: main.cpp  EP.o
+	${CXX} ${FLAGS} -o $@ $^
 
 
