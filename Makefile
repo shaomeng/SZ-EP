@@ -10,6 +10,7 @@ EP.o: EP.cpp
 	${CXX} ${FLAGS} -c -o $@ $<
 
 sz_ep: main.cpp  EP.o
-	${CXX} ${FLAGS} -o $@ $^
+	${CXX} ${FLAGS} -fopenmp -o $@ $^
 
-
+clean:
+	rm -f EP.o sz_ep

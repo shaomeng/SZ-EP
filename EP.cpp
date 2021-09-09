@@ -16,7 +16,7 @@ auto EP::read_n_bytes(const char* filename, size_t n_bytes, void* buffer) -> boo
     return false;
 
   std::fseek(fp.get(), 0, SEEK_END);
-  if (std::ftell(fp.get()) < n_bytes)
+  if (size_t(std::ftell(fp.get())) < n_bytes)
     return false;
 
   std::fseek(fp.get(), 0, SEEK_SET);
