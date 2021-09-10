@@ -24,20 +24,20 @@ extern "C" {
 };
 
 
-auto test_sz(  vecf_type&        chunk,
-               double            tol,
-               dims_type         dims ) -> std::pair<size_t, vecf_type>
+auto test_sz(  vecf_type&       chunk,    // input
+               double           tol,      // input
+               dims_type        dims,     // input
+               size_t&          comp_len) // output
+    -> vecf_type
 {
   // Note that the following definitions are from include/sz/defines.h
   const int SZ_FLOAT = 0; // #define SZ_FLOAT 0
   const int ABS = 0;      // #define ABS 0
 
-  size_t comp_buf_len = 0;
-
-  auto* comp_buf = SZ_compress_args( SZ_FLOAT, chunk.data(), &comp_buf_len,
+  auto* comp_buf = SZ_compress_args( SZ_FLOAT, chunk.data(), &comp_len,
                                      ABS, tol, tol, tol, 
                                      0, 0, dims[2], dims[1], dims[0] );
-  const auto* reconstructed_buf = SZ_decompress( SZ_FLOAT, comp_buf, comp_buf_len,
+  const auto* reconstructed_buf = SZ_decompress( SZ_FLOAT, comp_buf, comp_len,
                                                  0, 0, dims[2], dims[1], dims[0] );
 
   const float* p = reinterpret_cast<const float*>(reconstructed_buf);
@@ -45,7 +45,7 @@ auto test_sz(  vecf_type&        chunk,
   auto buf = vecf_type( total_len );
   std::copy( p, p + total_len, buf.begin() );
   
-  return {comp_buf_len, buf};
+  return buf;
 }
 
 
@@ -85,13 +85,11 @@ int main(int argc, char* argv[])
 
     // Test it using SZ
     auto result = test_sz( chunks[i], tol, 
-                           {chunk_def[i][1], chunk_def[i][3], chunk_def[i][5]} );
+                           {chunk_def[i][1], chunk_def[i][3], chunk_def[i][5]},
+                           comp_len[i] );
 
     // Put this chunk to the output big volume
-    EP::scatter_chunk( out_buf, in_dims, result.second, chunk_def[i] );
-
-    // Also collect the compressed size
-    comp_len[i] = result.first;
+    EP::scatter_chunk( out_buf, in_dims, result, chunk_def[i] );
   }
 
   SZ_Finalize();
