@@ -1,15 +1,16 @@
 SHELL = /bin/sh
 
 FLAGS = -Wall -O2 -std=c++17
-LIBSZ_DIR = ./SZ-install/lib/
 
 UNAME = $(shell uname)
 ifeq ($(UNAME), Darwin)
   CXX = g++-11
+  LIBSZ_DIR = ./SZ-install/lib/
   RPATH = -Wl,-rpath,${LIBSZ_DIR}
 endif
 ifeq ($(UNAME), Linux)
   CXX = g++
+  LIBSZ_DIR = ./SZ-2.1.12/build/sz/
   RPATH = -Wl,-rpath=${LIBSZ_DIR}
 endif
 
