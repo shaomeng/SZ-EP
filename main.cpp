@@ -32,12 +32,12 @@ auto test_sz(  vecf_type&        chunk,
   const int SZ_FLOAT = 0; // #define SZ_FLOAT 0
   const int ABS = 0;      // #define ABS 0
 
-  size_t compressed_buf_len = 0;
+  size_t comp_buf_len = 0;
 
-  auto* compressed_buf = SZ_compress_args( SZ_FLOAT, chunk.data(), &compressed_buf_len,
-                                           ABS, tol, tol, tol, 
-                                           0, 0, dims[2], dims[1], dims[0] );
-  const auto* reconstructed_buf = SZ_decompress( SZ_FLOAT, compressed_buf, compressed_buf_len,
+  auto* comp_buf = SZ_compress_args( SZ_FLOAT, chunk.data(), &comp_buf_len,
+                                     ABS, tol, tol, tol, 
+                                     0, 0, dims[2], dims[1], dims[0] );
+  const auto* reconstructed_buf = SZ_decompress( SZ_FLOAT, comp_buf, comp_buf_len,
                                                  0, 0, dims[2], dims[1], dims[0] );
 
   const float* p = reinterpret_cast<const float*>(reconstructed_buf);
@@ -45,7 +45,7 @@ auto test_sz(  vecf_type&        chunk,
   auto buf = vecf_type( total_len );
   std::copy( p, p + total_len, buf.begin() );
   
-  return {compressed_buf_len, buf};
+  return {comp_buf_len, buf};
 }
 
 
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
   }
 
   // Hard code the desired chunk size, and num of threads
-  const auto chunk_dims = dims_type{ 128, 128, 128 };
+  const auto chunk_dims = dims_type{ 256, 256, 256 };
 
   const char* in_name = argv[1];
   const auto in_dims = dims_type{ std::stoul(argv[2]), std::stoul(argv[3]), std::stoul(argv[4]) };
