@@ -29,9 +29,7 @@ using dims_type = std::array<size_t, 3>;
 //
 // Helper functions
 //
-// Read from and write to a file
-auto write_n_bytes(const char* filename, size_t n_bytes, const void* buffer) -> bool;
-auto read_n_bytes(const char* filename, size_t n_bytes, void* buffer) -> bool;
+// Read from a file
 template <typename T>
 auto read_whole_file(const char* filename) -> std::vector<T>;
 

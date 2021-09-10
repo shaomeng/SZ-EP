@@ -8,24 +8,6 @@
 #include <numeric>
 
 
-auto EP::read_n_bytes(const char* filename, size_t n_bytes, void* buffer) -> bool
-{
-  std::unique_ptr<std::FILE, decltype(&std::fclose)> fp(std::fopen(filename, "rb"), &std::fclose);
-
-  if (!fp)
-    return false;
-
-  std::fseek(fp.get(), 0, SEEK_END);
-  if (size_t(std::ftell(fp.get())) < n_bytes)
-    return false;
-
-  std::fseek(fp.get(), 0, SEEK_SET);
-  if (std::fread(buffer, 1, n_bytes, fp.get()) != n_bytes)
-    return false;
-
-  return true;
-}
-
 template <typename T>
 auto EP::read_whole_file(const char* filename) -> std::vector<T>
 {
@@ -51,17 +33,6 @@ template auto EP::read_whole_file(const char*) -> std::vector<float>;
 template auto EP::read_whole_file(const char*) -> std::vector<double>;
 template auto EP::read_whole_file(const char*) -> std::vector<uint8_t>;
 
-auto EP::write_n_bytes(const char* filename, size_t n_bytes, const void* buffer) -> bool
-{
-  std::unique_ptr<std::FILE, decltype(&std::fclose)> fp(std::fopen(filename, "wb"), &std::fclose);
-  if (!fp)
-    return false;
-
-  if (std::fwrite(buffer, 1, n_bytes, fp.get()) != n_bytes)
-    return false;
-  else
-    return true;
-}
 
 template <typename T>
 void EP::calc_stats(const T* arr1,
@@ -101,8 +72,6 @@ void EP::calc_stats(const T* arr1,
   //
   // Calculate summation and l-infty of each stride
   //
-  // (Uncomment the following line to enable OpenMP)
-  // #pragma omp parallel for
   for (size_t stride_i = 0; stride_i < num_of_strides; stride_i++) {
     T linfty = 0.0;
     auto buf = std::array<T, stride_size>();
@@ -160,6 +129,7 @@ template void EP::calc_stats(const double*,
                                 double&,
                                 double&);
 
+
 auto EP::chunk_volume(const std::array<size_t, 3>& vol_dim,
                          const std::array<size_t, 3>& chunk_dim)
     -> std::vector<std::array<size_t, 6>>
@@ -211,6 +181,7 @@ auto EP::chunk_volume(const std::array<size_t, 3>& vol_dim,
   return chunks;
 }
 
+
 template <typename T>
 auto EP::gather_chunk(const T* vol, dims_type vol_dim, const std::array<size_t, 6>& chunk)
     -> std::vector<T>
@@ -240,6 +211,7 @@ template auto EP::gather_chunk(const float*, dims_type, const std::array<size_t,
     -> std::vector<float>;
 template auto EP::gather_chunk(const double*, dims_type, const std::array<size_t, 6>&)
     -> std::vector<double>;
+
 
 template <typename T>
 void EP::scatter_chunk(std::vector<T>& big_vol,
