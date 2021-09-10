@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
     return 0;
   }
 
-  // Hard code the desired chunk size, and num of threads
+  // Hard code the desired chunk size
   const auto chunk_dims = dims_type{ 256, 256, 256 };
 
   const char* in_name = argv[1];
@@ -99,6 +99,7 @@ int main(int argc, char* argv[])
   EP::calc_stats(in_buf.data(), out_buf.data(), total_len,
                  rmse, linfty, psnr, arr1min, arr1max);
   auto total_bytes = std::accumulate( comp_len.begin(), comp_len.end(), size_t{0} );
+
   printf("-> SZ achieved bpp = %.2f\n", double(total_bytes * 8) / double(total_len) );
   printf("|- Original data range = (%.2e, %.2e)\n", arr1min, arr1max);
   printf("|- Reconstructed data RMSE = %.2e, L-Infty = %.2e, PSNR = %.2fdB\n", rmse, linfty, psnr);
