@@ -37,13 +37,16 @@ auto test_sz(  vecf_type&       chunk,    // input
   auto* comp_buf = SZ_compress_args( SZ_FLOAT, chunk.data(), &comp_len,
                                      ABS, tol, tol, tol, 
                                      0, 0, dims[2], dims[1], dims[0] );
-  const auto* reconstructed_buf = SZ_decompress( SZ_FLOAT, comp_buf, comp_len,
-                                                 0, 0, dims[2], dims[1], dims[0] );
+  auto* reconstructed_buf = SZ_decompress( SZ_FLOAT, comp_buf, comp_len,
+                                           0, 0, dims[2], dims[1], dims[0] );
 
   const float* p = reinterpret_cast<const float*>(reconstructed_buf);
   const auto total_len = dims[0] * dims[1] * dims[2];
   auto buf = vecf_type( total_len );
   std::copy( p, p + total_len, buf.begin() );
+
+  free( comp_buf );
+  free( reconstructed_buf );
   
   return buf;
 }
@@ -77,7 +80,7 @@ int main(int argc, char* argv[])
   
   SZ_Init( NULL ); // Use SZ default settings
 
-  #pragma omp parallel for num_threads(18)
+  #pragma omp parallel for num_threads(4)
   for( size_t i = 0; i < num_chunks; i++ ) {
 
     // Gather a chunk from the big volume
