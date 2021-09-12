@@ -75,9 +75,9 @@ int main(int argc, char* argv[])
   auto chunks = std::vector< std::vector<float> >( num_chunks );
   auto comp_len = std::vector<size_t>( num_chunks );
   
-  SZ_Init( "./sz.config" ); // Content in this file will be overwritten.
+  SZ_Init( NULL ); // Use SZ default settings
 
-  #pragma omp parallel for num_threads(2)
+  #pragma omp parallel for num_threads(18)
   for( size_t i = 0; i < num_chunks; i++ ) {
 
     // Gather a chunk from the big volume
